@@ -47,7 +47,19 @@ namespace WebApiInternalTrainingProject.Controllers
                 return Ok("deleted Successfully!");
             }
 
-            return StatusCode(500,"employee not found!");
+            return StatusCode(500, "employee not found!");
+        }
+
+        [HttpPut("Employee/UpdateEmployee/{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] EmployeeModel targetEmp)
+        {
+            var result = await _emp.UpdateEmployeeById(id,targetEmp);
+            if (result)
+            {
+                return Ok("updated Successfully!");
+            }
+
+            return StatusCode(500, "employee not found!");
         }
 
     }

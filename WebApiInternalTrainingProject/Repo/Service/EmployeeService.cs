@@ -66,5 +66,22 @@ namespace WebApiInternalTrainingProject.Repo.Service
         {
             return await _dbContext.Employees.ToListAsync();
         }
+
+        public async Task<bool> UpdateEmployeeById(int Id, EmployeeModel emp)
+        {
+            var result = await GetEmployeeById(Id);
+            if (result != null)
+            {
+                result.name = emp.name;
+                result.department = emp.department;
+                result.yearsOfExperience = emp.yearsOfExperience;
+                result.martialStatus = emp.martialStatus;
+                result.age = emp.age;
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
     }
 }
