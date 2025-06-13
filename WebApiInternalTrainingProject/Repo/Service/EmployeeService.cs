@@ -83,5 +83,23 @@ namespace WebApiInternalTrainingProject.Repo.Service
 
             return false;
         }
+
+        public async Task<bool> CreateBulkEmployee(List<EmployeeModel> employees)
+        {
+            if (employees == null || employees.Count() == 0)
+            {
+                return false;
+            }
+            await _dbContext.Employees.AddRangeAsync(employees);
+            var rowsaffected = await _dbContext.SaveChangesAsync();
+
+            if(rowsaffected > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        
     }
 }

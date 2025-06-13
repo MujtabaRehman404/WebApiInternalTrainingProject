@@ -9,7 +9,6 @@ namespace WebApiInternalTrainingProject.Repo.Interface
         Task<bool> DeleteEmployee(int Id);
         Task<EmployeeModel> GetEmployeeById(int Id);
         Task<bool> UpdateEmployeeById(int Id,EmployeeModel emp);
-
-
+        Task<bool> CreateBulkEmployee(List<EmployeeModel> employees);
     }
 }

@@ -62,5 +62,18 @@ namespace WebApiInternalTrainingProject.Controllers
             return StatusCode(500, "employee not found!");
         }
 
+
+        [HttpPost("Employee/CreateBulkEmployee")]
+        public async Task<IActionResult> CreateBulkEmployee([FromBody] List<EmployeeModel> newemp)
+        {
+            var result = await _emp.CreateBulkEmployee(newemp);
+            if (result)
+            {
+                return Ok("Employees Created Successfully");
+            }
+
+            return StatusCode(500, "Issue Occured");
+        }
+
     }
 }
