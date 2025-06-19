@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebApiInternalTrainingProject.Data;
 using WebApiInternalTrainingProject.Repo.Interface;
 using WebApiInternalTrainingProject.Repo.Service;
@@ -13,6 +13,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEmployee,EmployeeService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,6 +30,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAll");
+
 
 app.UseHttpsRedirection();
 

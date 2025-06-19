@@ -26,6 +26,17 @@ namespace WebApiInternalTrainingProject.Controllers
             return Ok(result);
         }
 
+        [HttpGet("Employee/GetEmployeesById/{id}")]
+        public async Task<IActionResult> GetEmployeesById(int id)
+        {
+            var result = await _emp.GetEmployeeById(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
         [HttpPost("Employee/CreateEmployee")]
         public async Task<IActionResult> CreateEmployee([FromBody] EmployeeModel newemp)
         {
