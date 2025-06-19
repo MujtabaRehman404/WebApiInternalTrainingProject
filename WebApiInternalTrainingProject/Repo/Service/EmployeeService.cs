@@ -39,7 +39,7 @@ namespace WebApiInternalTrainingProject.Repo.Service
 
         public async Task<bool> DeleteEmployee(int Id)
         {
-            var result = await GetEmployeeById(Id);
+            var result = await _dbContext.Employees.FindAsync(Id);
             if (result != null)
             {
                 _dbContext.Employees.Remove(result);
@@ -51,12 +51,21 @@ namespace WebApiInternalTrainingProject.Repo.Service
             
         }
 
-        public async Task<EmployeeModel> GetEmployeeById(int Id)
+        public async Task<EmployeeDTO> GetEmployeeById(int Id)
         {
-            var targetEmp = await _dbContext.Employees.FindAsync(Id);
+            var targetEmp = await _dbContext.Employees.Where(e => e.Id == Id).Select(e => new EmployeeDTO
+            {
+                Id = e.Id,
+                name = e.name,
+                age = e.age,
+                martialStatus = e.martialStatus,
+                yearsOfExperience = e.yearsOfExperience,
+                DepartmentId = e.DepartmentId,
+                DepartmentName = e.Department.Name
+            }).FirstOrDefaultAsync();
+
             if (targetEmp != null)
             {
-                
                 return targetEmp;
             }
 
