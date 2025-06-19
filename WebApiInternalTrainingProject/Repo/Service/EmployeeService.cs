@@ -20,7 +20,7 @@ namespace WebApiInternalTrainingProject.Repo.Service
         {
             EmployeeModel newemp = new EmployeeModel();
             newemp.name = emp.name;
-            newemp.department = emp.department;
+            newemp.DepartmentId = emp.DepartmentId;
             newemp.yearsOfExperience = emp.yearsOfExperience;
             newemp.martialStatus = emp.martialStatus;
             newemp.age = emp.age;
@@ -56,15 +56,27 @@ namespace WebApiInternalTrainingProject.Repo.Service
             var targetEmp = await _dbContext.Employees.FindAsync(Id);
             if (targetEmp != null)
             {
+                
                 return targetEmp;
             }
 
             return null;
         }
 
-        public async Task<List<EmployeeModel>> GetEmployees()
+        public async Task<List<EmployeeDTO>> GetEmployees()
         {
-            return await _dbContext.Employees.ToListAsync();
+            return await _dbContext.Employees
+        .Select(e => new EmployeeDTO
+        {
+            Id = e.Id,
+            name = e.name,
+            age = e.age,
+            martialStatus = e.martialStatus,
+            yearsOfExperience = e.yearsOfExperience,
+            DepartmentId = e.DepartmentId,
+            DepartmentName = e.Department.Name
+        })
+        .ToListAsync();
         }
 
         public async Task<bool> UpdateEmployeeById(int Id, EmployeeModel emp)
@@ -73,7 +85,7 @@ namespace WebApiInternalTrainingProject.Repo.Service
             if (result != null)
             {
                 result.name = emp.name;
-                result.department = emp.department;
+                result.DepartmentId = emp.DepartmentId;
                 result.yearsOfExperience = emp.yearsOfExperience;
                 result.martialStatus = emp.martialStatus;
                 result.age = emp.age;
@@ -100,6 +112,5 @@ namespace WebApiInternalTrainingProject.Repo.Service
             return false;
         }
 
-        
     }
 }
