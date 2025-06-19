@@ -12,6 +12,8 @@ namespace WebApiInternalTrainingProject.Data
 
 
         public DbSet<EmployeeModel> Employees {  get; set; }
+        public DbSet<DepartmentModel> Departments { get; set; }
+
 
     }
 }
