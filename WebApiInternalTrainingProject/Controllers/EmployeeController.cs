@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using CsvHelper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using WebApiInternalTrainingProject.Data;
 using WebApiInternalTrainingProject.Models;
 using WebApiInternalTrainingProject.Repo.Interface;
 using WebApiInternalTrainingProject.Repo.Service;
@@ -10,8 +13,10 @@ namespace WebApiInternalTrainingProject.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployee _emp;
-        public EmployeeController(IEmployee emp)
+        private readonly AppDbContext _dbContext;
+        public EmployeeController(IEmployee emp, AppDbContext dbContext)
         {
+            _dbContext = dbContext;
             _emp = emp;
         }
 
@@ -68,22 +73,49 @@ namespace WebApiInternalTrainingProject.Controllers
             if (result)
             {
                 return Ok("updated Successfully!");
-            }
+            }  
 
-            return StatusCode(500, "employee not found!");
+            return StatusCode(500, "Employee not found!");
         }
 
 
-        [HttpPost("Employee/CreateBulkEmployee")]
-        public async Task<IActionResult> CreateBulkEmployee([FromBody] List<EmployeeModel> newemp)
+        [HttpPost("Employee/UpdateBulkEmployeeCsv")]
+        public async Task<IActionResult> CreateBulkEmployee(IFormFile file)
         {
-            var result = await _emp.CreateBulkEmployee(newemp);
-            if (result)
+            using var reader = new StreamReader(file.OpenReadStream());
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+            var records = csv.GetRecords<EmployeeCsvDTO>().ToList();
+
+            foreach (var record in records)
             {
-                return Ok("Employees Created Successfully");
+                var currentEmployee = new EmployeeModel();
+                currentEmployee.name = record.Name;
+                currentEmployee.age = record.Age;
+                currentEmployee.martialStatus = record.martialStatus;
+                currentEmployee.DepartmentId = record.Department;
+
+                _dbContext.Employees.Add(currentEmployee);
+                await _dbContext.SaveChangesAsync();
             }
 
-            return StatusCode(500, "Issue Occured");
+            return Ok("CSV data inserted successfully.");
+
+        }
+
+
+
+        //[HttpGet("Employee/hitApi")]
+        //public async Task<IActionResult> hitApi()
+        //{
+        //    await Task.Delay(2000);
+        //    return Ok("api is working");
+        //}
+
+        [HttpGet("Employee/hitApi")]
+        public void hitApi()
+        {
+            Thread.Sleep(4000);
         }
 
     }
